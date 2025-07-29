@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Uptime Monitor</title>
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    background: transparent;
+    color: white;
+    font-family: monospace;
+    font-size: 20px;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  body {
+    flex-direction: column;
+    gap: 1em;
+  }
+  .blocks {
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+    max-width: 600px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .block {
+    width: 8px;
+    height: 20px;
+    border-radius: 3px;
+    transition: background-color 0.3s ease;
+  }
+  .online {
+    background-color: #4F4;
+  }
+  .offline {
+    background-color: #F44;
+  }
+</style>
+</head>
+<body>
+  <div class="blocks" aria-label="Uptime Durumu" role="list"></div>
+
+<script>
+  const url = "https://topluyo.com/ping.php";
+  const blocksContainer = document.querySelector('.blocks');
+  const maxBlocks = 200;
+
+  async function test() {
+    try {
+      const start = performance.now();
+      const response = await fetch(url + '?_=' + Date.now(), { cache: "no-store" });
+      const time = Math.round(performance.now() - start);
+
+      if (response.ok) {
+        addBlock('online', time);
+      } else {
+        addBlock('offline', time);
+      }
+    } catch {
+      addBlock('offline', null);
+    }
+  }
+
+  function addBlock(status, time) {
+    const block = document.createElement('div');
+    block.classList.add('block', status);
+    block.title = status.toUpperCase() + (time ? ` - ${time} ms` : '');
+    blocksContainer.appendChild(block);
+
+    if (blocksContainer.children.length > maxBlocks) {
+      blocksContainer.removeChild(blocksContainer.firstElementChild);
+    }
+  }
+
+  function start() {
+    test(); // hemen başlat
+    setInterval(test, 10000); // her 10 saniyede bir test et
+  }
+
+  start();
+</script>
+</body>
+</html>

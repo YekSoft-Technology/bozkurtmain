@@ -1,0 +1,140 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bozkurk Atak Koruma</title>
+  <script src="//hasandelibas.github.io/documenter/documenter.js" defer></script>
+
+  <style>
+    /* Temel ve tematik ayarlar */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url('_f2793539-7b4a-496f-a061-eae2334d6082.jpg') no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Arka plan karartması */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: -1;
+    }
+
+    header {
+      padding: 1rem 2rem;
+      background-color: rgba(0, 0, 0, 0.6);
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      user-select: none;
+    }
+
+    main {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+      box-sizing: border-box;
+    }
+
+    section {
+      flex: 1 1 45%;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 1rem;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+      min-width: 300px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      border-bottom: 2px solid #ff66cc;
+      padding-bottom: 0.3rem;
+      color: #ff99dd;
+      text-shadow: 0 0 5px #ff66cc;
+    }
+
+    #output {
+      white-space: pre-line;
+      font-family: monospace;
+      font-size: 0.9rem;
+      max-height: 70vh;
+      overflow-y: auto;
+      color: #eee;
+    }
+
+    iframe {
+      width: 100%;
+      height: 3.5em;
+      border: none;
+      border-radius: 1em;
+      background: #0009;
+      backdrop-filter: blur(3px);
+      color-scheme: auto;
+      box-shadow: 0 0 15px #ff66cc;
+    }
+
+    @media (max-width: 768px) {
+      main {
+        flex-direction: column;
+        padding: 1rem;
+      }
+      section {
+        flex: 1 1 100%;
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    🐺 Bozkurk Atak Koruma
+  </header>
+
+  <main>
+    <section aria-label="Engellenen Adresler">
+      <h2>Engellenen Adresler [BLOCK IP]</h2>
+      <div id="output" role="log" aria-live="polite" aria-atomic="false"></div>
+    </section>
+
+    <section aria-label="Uptime Durumu">
+      <h2>Uptime</h2>
+      <iframe src="uptime.html" allowtransparency="true" title="Uptime Durumu"></iframe>
+    </section>
+  </main>
+
+  <script>
+    const outputEl = document.getElementById('output');
+    const eventSource = new EventSource('/events');
+
+    eventSource.onmessage = event => {
+      // Yeni veri gelince alt satıra ekle
+      outputEl.textContent += event.data + '\n';
+
+      // Scroll en alta kaydır
+      outputEl.scrollTop = outputEl.scrollHeight;
+    };
+
+    eventSource.onerror = () => {
+      console.error('EventSource bağlantısı kapandı veya hata oluştu.');
+      eventSource.close();
+    };
+  </script>
+</body>
+</html>
